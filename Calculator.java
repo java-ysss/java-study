@@ -1,25 +1,39 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 
 class Calculator {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        String[] numbers = { "1:足し算", "2:引き算", "3:掛け算", "4:割り算" };
-        String[] history = new String[100];
-        int historyIndex = 0;
+        ArrayList<String> history = new ArrayList<>();
+
+        String[] numbers = { "1:足し算", "2:引き算", "3:掛け算", "4:割り算","5:履歴を見る","6:履歴削除" };
 
         while (true) {
 
-            int num1 = getNumber(scanner);
-            int num2 = getNumber(scanner);
+            double num1 = getNumber(scanner);
+            double num2 = getNumber(scanner);
 
             int operation = selectOperation(numbers, scanner);
+            if (operation == 5) {
+                System.out.println("履歴");
+                for(int i = 0; i < history.size(); i++){
+                    System.out.println(history.get(i));
+                }
+                continue;
+            }
+            if (operation == 6) {
+                history.clear();
+                System.out.println("履歴を削除しました");
+                continue;
+            }
+
             System.out.println(operation + "を選択しました");
 
-            int calculateResult = calculate(num1, num2, operation);
+            double calculateResult = calculate(num1, num2, operation);
             String result = showResult(calculateResult, num1, num2, operation);
+            history.add(result);
 
-            history[historyIndex] = result;
-            historyIndex++;
+            history.get(0);
 
             int finish = finishCode(scanner);
             if (finish == 2) {
@@ -30,38 +44,39 @@ class Calculator {
 
         System.out.println("計算結果");
 
-        for(int i = 0; i < historyIndex; i++){
-            System.out.println(history[i]);
+        for(int i = 0; i < history.size(); i++){
+            System.out.println(history.get(i));
         }
 
     }
 
     // 数字を入力させる
-    public static int getNumber(Scanner scanner) {
+    public static double getNumber(Scanner scanner) {
         System.out.print("数字を入力してください：");
-        int number = scanner.nextInt();
+        double number = scanner.nextDouble();
         return number;
     }
 
     // 計算方法を選ぶ
     public static int selectOperation(String[] numbers, Scanner scanner) {
         System.out.println("計算方法を選んでね");
+        
         for (int i = 0; i < numbers.length; i++) {
             System.out.println(numbers[i]);
         }
         while (true) {
             int select = scanner.nextInt();
-            if (select >= 1 && select <= 4) {
+            if (select >= 1 && select <= 6) {
 
                 return select;
             }
 
-            System.out.println("1 ~ 4の間で入力してください");
+            System.out.println("1 ~ 6 の間で入力してください");
         }
     }
 
     // 計算する
-    public static int calculate(int num1, int num2, int operation) {
+    public static double calculate(double num1, double num2, int operation) {
 
         switch (operation) {
             case 1:
@@ -82,7 +97,7 @@ class Calculator {
     }
 
     // 計算結果
-    public static String showResult(int calculateResult, int num1, int num2, int operation) {
+    public static String showResult(double calculateResult, double num1, double num2, int operation) {
         String symbol = "";
 
         switch (operation) {
