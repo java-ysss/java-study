@@ -1,3 +1,4 @@
+package Calculator;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -6,7 +7,7 @@ class Calculator {
         Scanner scanner = new Scanner(System.in);
         ArrayList<String> history = new ArrayList<>();
 
-        String[] numbers = { "1:足し算", "2:引き算", "3:掛け算", "4:割り算","5:履歴を見る","6:履歴削除" };
+        String[] numbers = { "1:足し算", "2:引き算", "3:掛け算", "4:割り算", "5:履歴を見る", "6:履歴削除" };
 
         while (true) {
 
@@ -16,7 +17,7 @@ class Calculator {
             int operation = selectOperation(numbers, scanner);
             if (operation == 5) {
                 System.out.println("履歴");
-                for(int i = 0; i < history.size(); i++){
+                for (int i = 0; i < history.size(); i++) {
                     System.out.println(history.get(i));
                 }
                 continue;
@@ -33,8 +34,6 @@ class Calculator {
             String result = showResult(calculateResult, num1, num2, operation);
             history.add(result);
 
-            history.get(0);
-
             int finish = finishCode(scanner);
             if (finish == 2) {
                 break;
@@ -44,7 +43,7 @@ class Calculator {
 
         System.out.println("計算結果");
 
-        for(int i = 0; i < history.size(); i++){
+        for (int i = 0; i < history.size(); i++) {
             System.out.println(history.get(i));
         }
 
@@ -52,15 +51,24 @@ class Calculator {
 
     // 数字を入力させる
     public static double getNumber(Scanner scanner) {
-        System.out.print("数字を入力してください：");
-        double number = scanner.nextDouble();
-        return number;
+        while (true) {
+
+            System.out.print("数字を入力してください：");
+
+            if (scanner.hasNextDouble()) {
+                double number = scanner.nextDouble();
+                return number;
+            }
+
+            System.out.println("数字を入力してください");
+            scanner.next();
+        }
     }
 
     // 計算方法を選ぶ
     public static int selectOperation(String[] numbers, Scanner scanner) {
         System.out.println("計算方法を選んでね");
-        
+
         for (int i = 0; i < numbers.length; i++) {
             System.out.println(numbers[i]);
         }
@@ -75,7 +83,7 @@ class Calculator {
         }
     }
 
-    // 計算する
+    // 計算メソッド
     public static double calculate(double num1, double num2, int operation) {
 
         switch (operation) {
@@ -96,7 +104,7 @@ class Calculator {
         }
     }
 
-    // 計算結果
+    // 計算結果メソッド
     public static String showResult(double calculateResult, double num1, double num2, int operation) {
         String symbol = "";
 
@@ -115,12 +123,11 @@ class Calculator {
                 break;
         }
 
-        String  result = (num1 + "" + symbol + "" + num2 + " = " + calculateResult);
-      
+        String result = (num1 + " " + symbol + " " + num2 + " = " + calculateResult);
+
         System.out.println(result);
         return result;
-        }
-    
+    }
 
     // 終了メソッド
     public static int finishCode(Scanner scanner) {
