@@ -2,12 +2,11 @@ package Calculator;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 
 class MiniCals {
     public static void main(String[] args) {
-        CalcHistory historyManager = new CalcHistory();//履歴管理クラスのインスタンス
-
-        //ArrayList<String> history = new ArrayList<>();クラスに任せるからいらない
+        CalcHistory historyManager = new CalcHistory();// 履歴管理クラスのインスタンス
         Scanner scanner = new Scanner(System.in);
         int count = 0;
         while (true) {
@@ -22,28 +21,17 @@ class MiniCals {
                 continue;
             }
             if (selectResult == 6) {
-                history.clear();
-                System.out.println("履歴を削除しました");
+                historyManager.clearHistory();
                 continue;
             }
             if (selectResult == 7) {
-                if (history.isEmpty()) {
-                    System.out.println("削除できる履歴がありません");
-                } else {
-                    history.remove(history.size() - 1);
-                    System.out.println("最後の履歴を削除しました");
-                }
+                historyManager.removeHistory();
                 continue;
             }
             if (selectResult == 8) {
                 System.out.println("削除する履歴番号を入力してください");
                 int index = scanner.nextInt();
-                index = index - 1;
-                if (index < 0 || index >= history.size()) {
-                    System.out.println("その履歴番号がありません");
-                }else{
-                    history.remove(index);
-                }
+                historyManager.indexHistory(index);
                 continue;
             }
 
@@ -54,10 +42,6 @@ class MiniCals {
 
             double num1 = getNumber(scanner);
             double num2 = getNumber(scanner);
-
-            double result = testOperation(num1, num2, selectResult);
-
-            count++;
 
             String operator = " ";
             switch (selectResult) {
@@ -74,9 +58,14 @@ class MiniCals {
                     operator = "/";
                     break;
             }
+            double result = testOperation(num1, num2, selectResult);
 
-            history.add(num1 + " " + operator + " " + num2 + " = " + result);
-            //historyManager.addHistory(record);
+            count++;
+
+            // history.add(num1 + " " + operator + " " + num2 + " = " + result);
+            String record = num1 + " " + operator + " " + num2 + " = " + result;
+            historyManager.addHistory(record);
+
             resultNumber(result);
 
             System.out.println("現在の計算回数：" + count + "です");
@@ -108,9 +97,19 @@ class MiniCals {
         for (int i = 0; i < numbers.length; i++) {
             System.out.println((i + 1) + ":" + numbers[i]);
         }
-        int number = scanner.nextInt();
+        while (true) {
 
-        return number;
+            int number = 0;
+            try {
+                number = scanner.nextInt();
+                return number;
+            } catch (InputMismatchException e) {
+                System.out.println("数字を入力してください");
+                scanner.next();
+            }
+
+        }
+
     }
 
     // 計算メソッド
