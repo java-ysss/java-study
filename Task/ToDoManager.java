@@ -84,7 +84,7 @@ public class ToDoManager {
                 ToDo todo = new ToDo();
                 todo.name = parts[0];
                 todo.isDone = Boolean.parseBoolean(parts[1]);
-                todo.priority = Priority.valueOf(parts[1]);
+                todo.priority = Priority.valueOf(parts[2]);
                 todos.add(todo);
             }
 

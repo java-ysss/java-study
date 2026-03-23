@@ -1,0 +1,2 @@
+buy,false,HIGH
+work,true,MEDIUM
