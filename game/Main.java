@@ -27,16 +27,42 @@ public class Main {
 
             if (select == 1) {
                 System.out.println("-> ジャンルを選んでください");
-                System.out.print("1. 通常");
-                System.out.print("2. RPG");
-                int genre = scanner.nextInt();
+                System.out.print("1. 通常 ");
+                System.out.print("2. RPG ");
+
+                int genre = 0;
+                int maxGenre = 2;
+                
+                try{
+                    genre = scanner.nextInt();
+                }catch(InputMismatchException e){
+                    System.out.println("数字で入力してください");
+                    scanner.nextLine();
+                    continue;
+                }
+
+                if (genre < 1 || genre > maxGenre) {
+                    System.out.println("1か" + maxGenre + "で入力してください");
+                    continue;
+                }
+
                 System.out.println("ゲーム名を入力してください");
                 String name = scanner.next();
+
                 if (genre == 1) {
                     manager.addGame(name);
                 } else if (genre == 2) {
                     System.out.println("レベルを入力してください");
-                    int level = scanner.nextInt();
+
+                    int level = 0;
+                    try {
+                        level = scanner.nextInt();
+                    } catch (InputMismatchException e) {
+                        System.out.println("数字を入力してください");
+                        scanner.nextLine();
+                        continue;
+                    }
+
                     manager.addRPGGame(name, level);
                 }
 
@@ -46,12 +72,25 @@ public class Main {
 
             } else if (select == 3) {
                 System.out.println("何番のゲームをクリア済みにしますか？");
-                int index = scanner.nextInt();
+                int index = 0;
+                try{
+                    index = scanner.nextInt();
+                }catch(InputMismatchException e){
+                    System.out.println("数字を入力してください");
+                    scanner.nextLine();
+                    continue;
+                }
                 manager.completeGame(index);
 
             } else if (select == 4) {
                 System.out.println("何番のゲームを削除しますか？");
-                int index = scanner.nextInt();
+                int index = 0;
+                try{
+                    index = scanner.nextInt();
+                }catch(InputMismatchException e){
+                    System.out.println("数字を入力してください");
+                    scanner.nextLine();
+                }
                 manager.deleteGame(index);
 
             } else if (select == 5) {

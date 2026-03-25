@@ -18,13 +18,14 @@ public class GameManager {
     public void showGame(){
         if (games.isEmpty()) {
             System.out.println("ゲームがまだ登録されていません");
+            return;
         }else{
             for(int i = 0; i < games.size(); i++){
                 Game game = games.get(i);
                 String status = game.isDone() ? "[クリア]" : "[未完]";
                 String genre = "";
-                if (game instanceof RPGGame) {
-                    genre = "[RPG]";
+                if (game instanceof Genreable g) {
+                    genre = g.getGenreName();
                 }
 
                 System.out.println((i + 1) + " "  + status + " " + genre + " " + game.getName());
