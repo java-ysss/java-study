@@ -1,17 +1,23 @@
 package book;
 //本のデータを入れて置くクラス
 public class Book {
-    private String name;
+    private String title;
+    private String author;
     private boolean isDone;
 //フィールドは箱
 
-    public Book(String name) {//これはコンストラクタ
-        this.name = name;
+    public Book(String title,String author) {//これはコンストラクタ
+        this.title = title;
+        this.author = author;
         this.isDone = false;
     }
 
-    public String getName() { //getはprivateだから値を取り出すための窓口
-        return name;
+    public String getTitle() { //getはprivateだから値を取り出すための窓口
+        return title;
+    }
+
+    public String getAuthor(){
+        return author;
     }
 
     public boolean isDone() {//is系のgetはisのままでいい慣習的に
@@ -20,6 +26,12 @@ public class Book {
 
     public void setDone(boolean done) {//後からと外から値を変えたいときにsetを使う、
         isDone = done;
+    }
+
+    
+    @Override
+    public String toString(){
+        return title + "(著:" + author + ")";
     }
 
 }
