@@ -18,7 +18,7 @@ public class Main {
         System.out.println("キングダムの問題スタート！！");
         int count = 0;
 
-        while (count < 10 && manager.getWin() < 5) {
+        while (count < 5 && manager.getWin() < 5) {
 
             System.out.println("==================================");
             System.out.print("1 ~ 5 の数字を順番に選んでね : ");
@@ -30,7 +30,7 @@ public class Main {
                 scanner.nextLine();
                 continue;
             }
-            if (select >= 1 && select <= 5) {
+            if (select >= 1 && select <= manager.getQuezCount()) {
                 if (usedList.contains(select)) {
                     System.out.println("その問題はもう選んでます。");
                 } else {
@@ -42,5 +42,6 @@ public class Main {
         }
         System.out.println("正解数は" + manager.getWin());
         System.out.println("不正解の回数は" + manager.getLose());
+        System.out.println("あなたの称号は" + "【 " +  manager.getRank() + " 】");
     }
 }

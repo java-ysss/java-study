@@ -4,9 +4,10 @@ package Quiz;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.Collections;
 
 public class QuizManager {
-    ArrayList<Quiz> quizzes = new ArrayList<>();
+    private ArrayList<Quiz> quizzes = new ArrayList<>();
 
     private int win;
     private int lose;
@@ -18,6 +19,9 @@ public class QuizManager {
         quizzes.add(new Quiz("ヒョウコウ将軍は何型の武将？", "知略", "本能", "感覚", "天才", 2));
         quizzes.add(new Quiz("飛信隊を命名したのは？", "王騎", "ヒョウコウ", "謄", "政", 1));
 
+    }
+    public void shuffleQuizzes(){
+        Collections.shuffle(quizzes);
     }
 
     public void showQuiz(int select, Scanner scanner, ArrayList<Integer> usedList) {
@@ -50,8 +54,18 @@ public class QuizManager {
         } else {
             System.out.println("不正解です！");
             lose++;
+            usedList.add(select);
         }
 
+    }
+
+    public String getRank() {
+        if (win == 5) {return ("大将軍 ★ 全問正解！！！");}
+        if (win == 4) {return ("五千人将");}
+        if (win == 3) {return ("三千人将");}
+        if (win == 2) {return ("千人将");}
+        if (win == 1) {return ("百人将");}
+        return "新兵";
     }
 
     public int getWin() {
@@ -60,5 +74,9 @@ public class QuizManager {
 
     public int getLose() {
         return lose;
+    }
+
+    public int getQuezCount() {
+        return quizzes.size();
     }
 }
