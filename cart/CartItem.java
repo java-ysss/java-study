@@ -5,6 +5,9 @@ public class CartItem {
     private int quantity; // 何個か
 
     public CartItem(Product product, int quantity){
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("個数は１以上にしてください"); //CartItemが作られる瞬間に不正な値を弾く
+        }
         this.product = product;
         this.quantity = quantity; //個数
     }

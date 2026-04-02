@@ -10,6 +10,8 @@ public class Main {
         cart.addItem(apple,3);
         cart.addItem(banana,2);
 
+        cart.removeItem(apple);
+
         Order order = new Order(cart, "2024-03-20");
         order.showOrder();
     }
