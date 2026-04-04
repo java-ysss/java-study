@@ -7,8 +7,8 @@ public class Player extends Character{ //継承
     private int expToLevelUp; //次のレベルに必要な経験値
 
 
-    public Player(String name, int hp, int attack,int recovery,double dodgeRate){
-        super(name, hp, attack,dodgeRate);
+    public Player(String name, int hp, int attack,int recovery,double dodgeRate,int fullAttack){
+        super(name, hp, attack,dodgeRate,fullAttack);
         this.recovery = recovery;
 
         this.level = 1;
@@ -40,7 +40,7 @@ public class Player extends Character{ //継承
         this.exp -= this.expToLevelUp; //これは繰り越しができる
         this.expToLevelUp += 90;
 
-        System.out.println("レベルが" + this.level + "lv に上がりました！");
+        System.out.println("レベルが" + this.level + " lv に上がりました！");
 
         this.maxHp += 20;
         this.hp = this.maxHp; //全回復する

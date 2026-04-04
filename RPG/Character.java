@@ -10,13 +10,15 @@ public class Character {
     protected int attack;
     protected int maxHp; 
     protected double dodgeRate;// 回避率
+    protected int fullAttack;
 
-    public Character(String name, int hp, int attack,double dodgeRate) {
+    public Character(String name, int hp, int attack,double dodgeRate,int fullAttack) {
         this.name = name;
         this.hp = hp;
         this.attack = attack;
         this.maxHp = hp;
         this.dodgeRate = dodgeRate;
+        this.fullAttack = fullAttack;
     }
 
     public void attack(Character target) {//攻撃する側
@@ -25,8 +27,8 @@ public class Character {
 
         int damages = this.attack;
 
-        if (Math.random() < 0.2) {
-            damages *= 2;
+        if (Math.random() < 0.2) { // Math.randomは0以上1未満の数字をランダムに選んでくれる
+            damages *= 2; //元の数字を残しながら二倍にできるs
             System.out.println("クリティカル！！！");
         }
         target.takeDamage(damages);
@@ -46,7 +48,29 @@ public class Character {
             this.hp = 0;
         }
         System.out.println(damage + "のダメージ");
+
     }
+
+    
+    public void allAttack(Character[] targets){
+        System.out.println(this.name + "の全体攻撃！");
+
+        for(Character target : targets){
+            if (target.isAlive()) { //ターゲットが生きていたら
+                
+                int damage = this.attack / 2; //攻撃を半分にして
+                target.takeDamage(damage);//ターゲットに対してtakeDmageメソッド
+
+                System.out.println(target.name + "に" + damage + "ダメージ！！");
+
+                if (!target.isAlive()) { // ! があるから逆の[生きていなければ]
+                    System.out.println(target.name + "を倒した！");
+                }
+            }
+        }
+    }
+
+
 
 
 
@@ -61,4 +85,12 @@ public class Character {
     public int getAttack() {
         return attack;
     }
+
+    public int getFullAttack(){
+        return fullAttack;
+    }
+    public boolean isAlive(){
+        return hp > 0; //HPが0より上は生きているよということ
+    }
+  
 }
