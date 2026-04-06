@@ -5,6 +5,7 @@ public class Player extends Character{ //継承
     private int level; //今のレベル
     private int exp; //現在の経験値
     private int expToLevelUp; //次のレベルに必要な経験値
+    
 
 
     public Player(String name, int hp, int attack,int recovery,double dodgeRate,int fullAttack){
@@ -24,11 +25,23 @@ public class Player extends Character{ //継承
         System.out.println(this.name + "は" + this.recovery + "回復した！");
     }
 
+
+    public void skillAttack(Character target){ //スキル攻撃
+        System.out.println(this.name + "のスキル攻撃！");
+        
+
+        int damage = this.attack * 2;
+
+        target.takeDamage(damage);
+    }
+
+    
+
     public void gainExp(int amount){
         System.out.println(amount + "の経験値を獲得！");
         this.exp += amount;
 
-        if (this.exp > this.expToLevelUp) {
+        if (this.exp >= this.expToLevelUp) {
             levelUp();
         }
     }

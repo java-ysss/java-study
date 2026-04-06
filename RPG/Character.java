@@ -10,7 +10,9 @@ public class Character {
     protected int attack;
     protected int maxHp; 
     protected double dodgeRate;// 回避率
-    protected int fullAttack;
+    protected int fullAttack; //スキル攻撃
+    protected boolean isDefending; //防御
+
 
     public Character(String name, int hp, int attack,double dodgeRate,int fullAttack) {
         this.name = name;
@@ -35,6 +37,7 @@ public class Character {
         System.out.println(target.name + "の残りHP : " + target.hp);
     }
 
+
     public void takeDamage(int damage){//攻撃を受ける側
 
         if (Math.random() < this.dodgeRate) {
@@ -42,16 +45,30 @@ public class Character {
             return;
         }
 
+        if (isDefending) {
+            damage /= 2;
+            System.out.println(this.name + "は防御してダメージを軽減した!");
+            //isDefending = false; これがあると一回で解除される
+        }
+
         this.hp -= damage;
 
         if (this.hp < 0) {
             this.hp = 0;
         }
-        System.out.println(damage + "のダメージ");
+        System.out.println(this.name + "は" + damage + "のダメージ");
+        System.out.println("-------------------------------");
 
     }
 
+
+    public void defend(){ //防御
+        System.out.println(this.name + "は防御の構えをした！");
+        isDefending = true;
+    }
     
+
+
     public void allAttack(Character[] targets){
         System.out.println(this.name + "の全体攻撃！");
 
@@ -91,6 +108,10 @@ public class Character {
     }
     public boolean isAlive(){
         return hp > 0; //HPが0より上は生きているよということ
+    }
+
+    public void setDifending(boolean isDefending){
+        this.isDefending = isDefending;
     }
   
 }
