@@ -12,15 +12,17 @@ public class Character {
     protected double dodgeRate;// 回避率
     protected int fullAttack; //スキル攻撃
     protected boolean isDefending; //防御
+    protected int speed;
 
 
-    public Character(String name, int hp, int attack,double dodgeRate,int fullAttack) {
+    public Character(String name, int hp, int attack,double dodgeRate,int fullAttack,int speed) {
         this.name = name;
         this.hp = hp;
         this.attack = attack;
         this.maxHp = hp;
         this.dodgeRate = dodgeRate;
         this.fullAttack = fullAttack;
+        this.speed = speed;
     }
 
     public void attack(Character target) {//攻撃する側
@@ -63,8 +65,13 @@ public class Character {
 
 
     public void defend(){ //防御
-        System.out.println(this.name + "は防御の構えをした！");
+        System.out.println(this.name + "は守りを固めている");
         isDefending = true;
+    }
+
+
+     public void resetState(){ //後から値を変えないから引数はいらない
+        isDefending = false; //防御の構え
     }
     
 
@@ -78,7 +85,7 @@ public class Character {
                 int damage = this.attack / 2; //攻撃を半分にして
                 target.takeDamage(damage);//ターゲットに対してtakeDmageメソッド
 
-                System.out.println(target.name + "に" + damage + "ダメージ！！");
+                //System.out.println(target.name + "に" + damage + "ダメージ！！");
 
                 if (!target.isAlive()) { // ! があるから逆の[生きていなければ]
                     System.out.println(target.name + "を倒した！");
@@ -110,8 +117,10 @@ public class Character {
         return hp > 0; //HPが0より上は生きているよということ
     }
 
-    public void setDifending(boolean isDefending){
-        this.isDefending = isDefending;
-    }
+    //public void setDifending(boolean isDefending){
+        //this.isDefending = isDefending; 防御メソッド/今回はほかのやつがいいらしい 
+        //後から変えられてしまうから　他のにも使えるように resetのやつに
+    //}
+
   
 }

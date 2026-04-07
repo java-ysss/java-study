@@ -8,8 +8,8 @@ public class Player extends Character{ //継承
     
 
 
-    public Player(String name, int hp, int attack,int recovery,double dodgeRate,int fullAttack){
-        super(name, hp, attack,dodgeRate,fullAttack);
+    public Player(String name, int hp, int attack,int recovery,double dodgeRate,int fullAttack,int speed){
+        super(name, hp, attack,dodgeRate,fullAttack,speed);
         this.recovery = recovery;
 
         this.level = 1;
