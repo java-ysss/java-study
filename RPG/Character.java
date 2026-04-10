@@ -12,10 +12,13 @@ public class Character {
     protected double dodgeRate;// 回避率
     protected int fullAttack; //スキル攻撃
     protected boolean isDefending; //防御
-    protected int speed;
+    protected int speed; //素早さ
+    protected double critRate; //クリティカル率
+    protected int action; //行動
+    protected Character target; //攻撃対象
 
 
-    public Character(String name, int hp, int attack,double dodgeRate,int fullAttack,int speed) {
+    public Character(String name, int hp, int attack,double dodgeRate,int fullAttack,int speed,double critRate) {
         this.name = name;
         this.hp = hp;
         this.attack = attack;
@@ -23,20 +26,20 @@ public class Character {
         this.dodgeRate = dodgeRate;
         this.fullAttack = fullAttack;
         this.speed = speed;
+        this.critRate = critRate;
     }
 
     public void attack(Character target) {//攻撃する側
        
-        System.out.println(this.name + "の攻撃！");
+       // System.out.println(this.name + "の攻撃！");
 
         int damages = this.attack;
 
-        if (Math.random() < 0.2) { // Math.randomは0以上1未満の数字をランダムに選んでくれる
+        if (Math.random() < critRate) { // Math.randomは0以上1未満の数字をランダムに選んでくれる
             damages *= 2; //元の数字を残しながら二倍にできるs
             System.out.println("クリティカル！！！");
         }
         target.takeDamage(damages);
-        System.out.println(target.name + "の残りHP : " + target.hp);
     }
 
 
@@ -44,13 +47,14 @@ public class Character {
 
         if (Math.random() < this.dodgeRate) {
             System.out.println(this.name + "は攻撃を回避した！"); //攻撃を受ける側だから回避コマンド
+            isDefending = false;//回避しても防御は解除
             return;
         }
 
         if (isDefending) {
             damage /= 2;
             System.out.println(this.name + "は防御してダメージを軽減した!");
-            //isDefending = false; これがあると一回で解除される
+            
         }
 
         this.hp -= damage;
@@ -59,8 +63,10 @@ public class Character {
             this.hp = 0;
         }
         System.out.println(this.name + "は" + damage + "のダメージ");
+        System.out.println(this.name + "の残りHP :" + this.hp);
         System.out.println("-------------------------------");
 
+        isDefending = false; // 防御、回避、攻撃されても、防御解除できる
     }
 
 
@@ -92,6 +98,10 @@ public class Character {
                 }
             }
         }
+    }
+
+    public void performAction(){ //オーバーライドの元、空でもいいらしい
+
     }
 
 
