@@ -2,6 +2,9 @@ package RPG;
 
 //共通の親クラス、名前、HP、攻撃
 
+import java.util.ArrayList;
+import java.util.List;
+
 //protectedは子クラスOK　privateはだめ
 
 public class Character {
@@ -16,9 +19,13 @@ public class Character {
     protected double critRate; //クリティカル率
     protected int action; //行動
     protected Character target; //攻撃対象
+    protected int mp; //mp
+    protected int maxMp; // mpの最大値
+
+    protected List<Skill> skills = new ArrayList<>();//これで各キャラ複数のスキルを持てるようになる
 
 
-    public Character(String name, int hp, int attack,double dodgeRate,int fullAttack,int speed,double critRate) {
+    public Character(String name, int hp, int attack,double dodgeRate,int fullAttack,int speed,double critRate,int mp) {
         this.name = name;
         this.hp = hp;
         this.attack = attack;
@@ -27,6 +34,8 @@ public class Character {
         this.fullAttack = fullAttack;
         this.speed = speed;
         this.critRate = critRate;
+        this.mp = mp;
+        this.maxMp = mp;
     }
 
     public void attack(Character target) {//攻撃する側
@@ -67,6 +76,37 @@ public class Character {
         System.out.println("-------------------------------");
 
         isDefending = false; // 防御、回避、攻撃されても、防御解除できる
+    }
+
+    //スキルを登録する（MainやFactoryで使う）
+    public void addSkill(Skill skill){
+        skills.add(skill);
+    }
+
+    //スキルを使う（MPチェックして実行）
+    public boolean useSkill(int index, Character[] targets){
+        if (index < 0 || index >= skills.size()) {
+            System.out.println("そのスキルはない！");
+            return false;
+        }
+        Skill skill = skills.get(index);
+
+        if (mp < skill.getMpCost()) {
+            System.out.println("MPが足りない!!");
+            return false;
+        }
+
+        mp -= skill.getMpCost(); // MPを消費
+        skill.execute(this, targets);// スキル実行
+        return true;
+    }
+
+    //Character 共通のhealメソッド(HealSkillから呼ばれる)
+    public void heal(int amout){
+        this.hp += amout;
+        if (this.hp > this.maxHp) {
+            this.hp = this.maxHp;
+        }
     }
 
 

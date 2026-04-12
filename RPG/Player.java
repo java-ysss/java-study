@@ -8,19 +8,17 @@ public class Player extends Character { // 継承
     private int level; // 今のレベル
     private int exp; // 現在の経験値
     private int expToLevelUp; // 次のレベルに必要な経験値
-    private int mp; //mp
-    private int maxMp; // 最大値
+    private Enemy[] savedEnemies; //performActionで使うために保存
 
     public Player(String name, int hp, int attack, int recovery, double dodgeRate, int fullAttack, int speed,
-            double critRate,int mp) {
-        super(name, hp, attack, dodgeRate, fullAttack, speed, critRate);
+            double critRate, int mp) {
+        super(name, hp, attack, dodgeRate, fullAttack, speed, critRate, mp);
         this.recovery = recovery;
 
         this.level = 1;
         this.exp = 0;
         this.expToLevelUp = 100;
-        this.mp = mp;
-        this.maxMp = mp;
+
     }
 
     public void heal() {
@@ -65,8 +63,10 @@ public class Player extends Character { // 継承
 
     }
 
-    public void chooseAction(Enemy[] enemies, Scanner scanner){ 
-        //プレイヤーが何をするか決めるところ,まだ攻撃しない
+    public void chooseAction(Enemy[] enemies, Player[] party, Scanner scanner) {
+        // プレイヤーが何をするか決めるところ,まだ攻撃しない
+
+        this.savedEnemies = enemies; // 保存
 
         System.out.println(this.name + "の行動");
 
@@ -78,28 +78,69 @@ public class Player extends Character { // 継承
             target = chooseTarget(enemies, scanner);
         }
 
+        if (action == 3) {
+            // スキル一覧を表示
+            for (int i = 0; i < skills.size(); i++) {
+                System.out.println((i + 1) + ":" + skills.get(i).getName()
+                        + "MP : " + skills.get(i).getMpCost());
+            }
+            int skillIndex = Battle.inputNumber(scanner) - 1; // 0始まりに変換
+
+            // 範囲チェック↓
+            while (skillIndex < 0 || skillIndex >= skills.size()) {
+                System.out.println("もう一度入力してください");
+                skillIndex = Battle.inputNumber(scanner) - 1;
+            }
+
+            action = 300 + skillIndex; // 300番台でスキル番号を保存 (例：３００ = スキル０番)
+            // target = chooseTarget(enemies, scanner); //ターゲットも選ぶ
+
+            Skill selected = skills.get(skillIndex);
+
+            // ↓ 味方対象か敵対象で選択先を切り替える
+            if (selected.isAoe()) {
+
+                // 全体攻撃はターゲット選択不要
+                target = null;
+            } else if (selected.isTargetAlly()) {
+
+                target = chooseTarget(party, scanner); // 味方から選ぶ
+
+            } else {
+
+                target = chooseTarget(enemies, scanner); // 敵から選ぶ
+            }
+        }
+
     }
 
     @Override
-    public void performAction(){ // 実際に行動するメソッド
+    public void performAction() { // 実際に行動するメソッド
 
         if (action == 1) {
             System.out.println(this.name + "の攻撃！");
 
             attack(target);
-        }
-        else if (action == 2) {
+        } else if (action == 2) {
             defend();
+        } else if (action >= 300) {
+            int skillIndex = action - 300; // 300を引いてスキル番号を取り出す
+
+            Skill selected = skills.get(skillIndex);
+
+            if (selected.isAoe()) {
+                useSkill(skillIndex,savedEnemies); //全員に渡す
+            }else{
+                useSkill(skillIndex, new Character[] { target }); // 単体スキル用
+            }
         }
     }
 
-  
-                                    //↓は攻撃対象のキャラ
-    public Character chooseTarget(Character[] targets, Scanner scanner) { 
+    // ↓は攻撃対象のキャラ
+    public Character chooseTarget(Character[] targets, Scanner scanner) {
         // 攻撃するキャラを選ぶ,そのキャラを返す
 
-      
-        ArrayList<Integer> aliveList = new ArrayList<>(); //死んだ敵を選べない
+        ArrayList<Integer> aliveList = new ArrayList<>(); // 死んだ敵を選べない
 
         int displayIndex = 1;
 
@@ -117,11 +158,11 @@ public class Player extends Character { // 継承
 
         int choice = Battle.inputNumber(scanner) - 1;
 
-        while (choice < 0 || choice >= aliveList.size()) { // 入力範囲チェック もし数字が変だったら
-                                                            //変な数字の間,入力し続けるという意味になる。
+        while (choice < 0 || choice >= aliveList.size()) { // 入力範囲チェック もし数字が変だっ
+            // // 変な数字の間,入力し続けるという意味になる。
             System.out.println("もう一度入力してください");
 
-            choice = Battle.inputNumber(scanner) - 1;  //こっちは新しい入力を受け取るため
+            choice = Battle.inputNumber(scanner) - 1; // こっちは新しい入力を受け取るため
         }
 
         int targetIndex = aliveList.get(choice);
@@ -129,25 +170,7 @@ public class Player extends Character { // 継承
         return targets[targetIndex];
     }
 
-    //魔法
-
-    public void fire(Enemy enemy){
-
-        if (mp < 10) {
-            System.out.println("MPが足りない!");
-            return;
-        }
-
-        mp -= 10;
-
-        int damage = 30;
-
-        System.out.println(this.name + "はファイアを使った！");
-
-        enemy.takeDamage(damage);
-    }
-
-    public int getMp(){
+    public int getMp() {
         return mp;
     }
 

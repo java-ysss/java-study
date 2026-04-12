@@ -6,7 +6,7 @@ public class Enemy extends Character{ //継承
     private boolean isDead = false; //敵が倒されたか　falseは生きてる
     
     public Enemy(String name, int hp , int attack,double dodgeRate,int exp,int fullAttack,int speed,double critRate){
-        super(name, hp, attack,dodgeRate,fullAttack,speed,critRate);
+        super(name, hp, attack,dodgeRate,fullAttack,speed,critRate,0);
 
         this.exp = exp;
 
@@ -24,22 +24,6 @@ public class Enemy extends Character{ //継承
         return false; //　falseはまだ死んでない
     }
 
-    public void takeTurn(Player[] party){
-
-        int action = (int)(Math.random() * 100); // 確率調整で100%として
-
-        if (action < 70) { //70%で攻撃
-
-            int target = (int)(Math.random() * party.length);
-
-            if (party[target].isAlive()) {
-                attack(party[target]);
-            }
-        }else{
-            defend();
-        }
-        
-    }
 
     public void chooseAction(Player[] party){
 
