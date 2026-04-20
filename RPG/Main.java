@@ -1,8 +1,6 @@
 package RPG;
 
-import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.util.ArrayList;
 
 public class Main {
 

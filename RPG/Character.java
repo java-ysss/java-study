@@ -22,7 +22,8 @@ public class Character {
     protected int mp; //mp
     protected int maxMp; // mpの最大値
 
-    protected List<Skill> skills = new ArrayList<>();//これで各キャラ複数のスキルを持てるようになる
+    protected List<Skill> skills = new ArrayList<>();
+    //これで各キャラ複数のスキルを持てるようになる
 
 
     public Character(String name, int hp, int attack,double dodgeRate,int fullAttack,int speed,double critRate,int mp) {
