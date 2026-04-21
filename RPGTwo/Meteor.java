@@ -12,7 +12,7 @@ public class Meteor extends Skill{
     }
 
     @Override
-    public void use(Player user , Enemy[] targets){
+    public void use(Character user , Character[] targets){
 
         if (user.mp < mpCost) {
             System.out.println("MPが足りません!");
@@ -23,7 +23,7 @@ public class Meteor extends Skill{
 
         System.out.println(user.name + "はメテオを使った！！");
 
-        for(Enemy enemy : targets){
+        for(Character enemy : targets){
             if (enemy.isAlive()) {
                 
                 int damage = user.attack + (int)(Math.random() + 5);

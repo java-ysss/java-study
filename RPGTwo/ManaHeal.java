@@ -6,7 +6,7 @@ public class ManaHeal extends Skill{
         super("マナヒール", 5, TargetType.SELF);
     }
         @Override
-        public void use(Player user, Enemy target){
+        public void use(Character user, Character target){
 
             if (user.mp < mpCost) {
                 System.out.println("MPが足りません!");

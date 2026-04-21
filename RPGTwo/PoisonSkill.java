@@ -8,7 +8,7 @@ public class PoisonSkill extends Skill {
     }
 
     @Override
-    public void use(Player user, Enemy target) {
+    public void use(Character user, Character target) {
 
         if (user.mp < mpCost) {
             System.out.println("MPが足りません!");
@@ -17,13 +17,12 @@ public class PoisonSkill extends Skill {
 
         user.mp -= mpCost;
 
-        target.takeDamage(10);
-
         if (target.hasStatus("毒")) {
             System.out.println("しかし効果はなかった！");
         } else {
             // ここが重要
             System.out.println(user.name + "の" + name + "!!!");
+            target.takeDamage(10);
             target.statusEffects.add(new StatusEffect("毒", 3, 5));
             System.out.println(target.name + "は毒状態になった！");
 

@@ -7,7 +7,7 @@ public class ParalyzeSkill extends Skill{
     }
 
     @Override
-    public void use(Player user, Enemy target){
+    public void use(Character user, Character target){
 
         if (user.mp < mpCost) {
             System.out.println("MPが足りません!");
@@ -16,12 +16,12 @@ public class ParalyzeSkill extends Skill{
 
         user.mp -= mpCost;
 
-        target.takeDamage(5);
 
         if (target.hasStatus("麻痺")) {
             System.out.println("しかし効果はなかった！");
         }else{
             System.out.println(user.name + "の麻痺攻撃！");
+            target.takeDamage(5);
             target.statusEffects.add(new StatusEffect("麻痺", 2, 0));
             System.out.println(target.name + "は麻痺した！");
         }

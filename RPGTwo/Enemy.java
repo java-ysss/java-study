@@ -1,38 +1,43 @@
 package RPGTwo;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Enemy extends Character{
-    
-    int attack;
+
     double critRate;
     double dodgeRate;
     
 
-    public Enemy(String name , int hp , int attack,double critRate , double dodgeRate){
-        super(name, hp);
-
-        this.attack = attack;
-        this.critRate = critRate;//クリティカル
-        this.dodgeRate = dodgeRate;//回避率
+    public Enemy(String name , int hp ,int mp, int attack,double critRate , double dodgeRate){
+        super(name, hp , mp,attack,dodgeRate,critRate);
     }
 
-    public void attack(Player player){
-        System.out.println(this.name + "の攻撃！");
+    // ↓ 使えるスキルを調べる → スキルがあればランダムに使用 →　無ければ通常攻撃
+    public void takeAction(Character target){
 
-        if (Math.random() < player.dodgeRate) {
-            System.out.println("miss!!");
-            return;
+        Random rand = new Random();
+
+        //使えるスキルを集める箱
+        ArrayList<Integer> usableSkills = new ArrayList<>();
+
+        for(int i = 0; i < skills.size(); i++){
+            Skill s = skills.get(i);
+
+            if (this.mp >= s.mpCost) {
+                usableSkills.add(i);
+            }
         }
 
-        int damage = this.attack + (int)(Math.random() * 5);
-
-        if (Math.random() < this.critRate) {
-            
-            damage *= 2;
-            System.out.println("クリティカル！");
+        //行動決定
+        if (usableSkills.size() > 0) {
+            int index = usableSkills.get(rand.nextInt(usableSkills.size()));
+            useSkill(index , target);
+        }else{
+            attack(target);
         }
-
-        player.takeDamage(damage);
     }
+
 
     //public String getName(){
         //  return name;
@@ -51,3 +56,7 @@ public class Enemy extends Character{
     //public boolean isAlive(){
       //  return hp > 0;
     //}
+//ArrayList<String>  list = new ArrayList<>();  // 文字列のリスト
+//ArrayList<Double>  list = new ArrayList<>();  // 小数のリスト
+//ArrayList<Boolean> list = new ArrayList<>();  // true/falseのリスト
+//Integer は　整数のみ

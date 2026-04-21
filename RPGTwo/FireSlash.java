@@ -7,7 +7,7 @@ public class FireSlash extends Skill {
     }
 
     @Override
-    public void use(Player user , Enemy target){
+    public void use(Character user , Character target){
         if(user.mp < mpCost){
             System.out.println("MPが足りない!");
             return;
