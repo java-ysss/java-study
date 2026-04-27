@@ -1,6 +1,7 @@
 package RPGTwo;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Enemy extends Character{
@@ -9,8 +10,8 @@ public class Enemy extends Character{
     double dodgeRate;
     
 
-    public Enemy(String name , int hp ,int mp, int attack,double critRate , double dodgeRate){
-        super(name, hp , mp,attack,dodgeRate,critRate);
+    public Enemy(String name , int hp ,int mp, int attack,double critRate , double dodgeRate,int speed){
+        super(name, hp , mp,attack,dodgeRate,critRate,speed);
     }
 
     // ↓ 使えるスキルを調べる → スキルがあればランダムに使用 →　無ければ通常攻撃
@@ -36,6 +37,12 @@ public class Enemy extends Character{
         }else{
             attack(target);
         }
+    }
+
+    public void takeTurn(List<Player> party){
+        //通常敵はランダムで一人攻撃
+        Player target = party.get((int)(Math.random() * party.size()));
+        takeAction(target);
     }
 
 

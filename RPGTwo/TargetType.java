@@ -3,7 +3,10 @@ package RPGTwo;
 public enum TargetType {
     SINGLE_ENEMY,
     ALL_ENEMIES,
-    SELF
+    SELF,
+    SINGLE_ALLY,
+    ALL_ALLIES,
+    DEAD_ALLY
 }
 
 //定数は（変わらない値）は全部大文字という慣習がある

@@ -13,13 +13,14 @@ public abstract class Character {
     boolean isDefending;
     double dodgeRate;
     double critRate;
+    int speed;
 
     ArrayList<Skill> skills = new ArrayList<>();
 
     ArrayList<StatusEffect> statusEffects = new ArrayList<>();
     // <>の中身はクラスとかの型
 
-    public Character(String name, int hp, int mp, int attack, double dodgeRate, double critRate) {
+    public Character(String name, int hp, int mp, int attack, double dodgeRate, double critRate,int speed) {
         this.name = name;
         this.hp = hp;
         this.maxHp = hp;
@@ -28,6 +29,7 @@ public abstract class Character {
         this.maxMp = mp;
         this.dodgeRate = dodgeRate;
         this.critRate = critRate;
+        this.speed = speed;
     }
 
     public void addSkill(Skill skill) {
@@ -60,9 +62,11 @@ public abstract class Character {
     public void takeDamage(int damage) {
 
         if (isDefending) {
+            
             damage /= 2;
+            System.out.println(this.name + "は防御をしてダメージを軽減した！");
             isDefending = false;
-            System.out.println(this.name + "は防御の構えをした！");
+            
         }
 
         hp -= damage;

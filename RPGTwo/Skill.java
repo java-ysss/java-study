@@ -18,9 +18,9 @@ public abstract class Skill { //必ず継承して使う前提のクラス
 
 
     //全体攻撃（デフォルトでは使えない）
-    public void use(Character user, Character[] targets){
-        System.out.println("このスキルは全体攻撃ではない！");
-    }
+   // public void use(Character user, Character[] targets){
+     //   System.out.println("このスキルは全体攻撃ではない！");
+    //}
 
     //共通クリティカル処理
     protected int applyCritical(Character user, int damage){

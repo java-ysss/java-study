@@ -1,38 +1,22 @@
 package RPGTwo;
 
-public class Meteor extends Skill{
-    
-    public Meteor(){
-        super("メテオ", 15,TargetType.ALL_ENEMIES);
+public class Meteor extends Skill {
+
+    public Meteor() {
+        super("メテオ", 15, TargetType.ALL_ENEMIES);
     }
 
     @Override
-    public void use(Player user , Enemy target){
-        System.out.println("このスキルは単体攻撃では使えない！");
-    }
+    public void use(Character user, Character target) {
 
-    @Override
-    public void use(Character user , Character[] targets){
+        
+        //user.mp -= mpCost;
 
-        if (user.mp < mpCost) {
-            System.out.println("MPが足りません!");
-            return;
-        }
+        int damage = user.attack + (int) (Math.random() * 5);
 
-        user.mp -= mpCost;
+        damage = applyCritical(user, damage);
 
-        System.out.println(user.name + "はメテオを使った！！");
+        target.takeDamage(damage);
 
-        for(Character enemy : targets){
-            if (enemy.isAlive()) {
-                
-                int damage = user.attack + (int)(Math.random() + 5);
-
-                damage = applyCritical(user, damage);
-
-                enemy.takeDamage(damage);
-            }
-
-        }
     }
 }

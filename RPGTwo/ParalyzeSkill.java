@@ -9,14 +9,6 @@ public class ParalyzeSkill extends Skill{
     @Override
     public void use(Character user, Character target){
 
-        if (user.mp < mpCost) {
-            System.out.println("MPが足りません!");
-            return;
-        }
-
-        user.mp -= mpCost;
-
-
         if (target.hasStatus("麻痺")) {
             System.out.println("しかし効果はなかった！");
         }else{

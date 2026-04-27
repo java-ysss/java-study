@@ -4,8 +4,8 @@ package RPGTwo;
 
 public class Player extends Character {
 
-    public Player(String name, int hp, int mp, int attack, double critRate, double dodgeRate) {
-        super(name, hp, mp, attack, dodgeRate, critRate);
+    public Player(String name, int hp, int mp, int attack, double critRate, double dodgeRate,int speed) {
+        super(name, hp, mp, attack, dodgeRate, critRate,speed);
 
         this.maxHp = hp;
         this.maxMp = mp;

@@ -10,12 +10,6 @@ public class PoisonSkill extends Skill {
     @Override
     public void use(Character user, Character target) {
 
-        if (user.mp < mpCost) {
-            System.out.println("MPが足りません!");
-            return;
-        }
-
-        user.mp -= mpCost;
 
         if (target.hasStatus("毒")) {
             System.out.println("しかし効果はなかった！");
