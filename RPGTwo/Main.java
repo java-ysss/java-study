@@ -48,136 +48,11 @@ public class Main {
 
             for (Player player : party) {
 
-                if (!player.isAlive()) {
-                    continue;
-                } // 死んでたらスキップ
-
-                System.out.println(" ○ " + player.name + "のコマンド");
-                System.out.println("【1: 攻撃  2: 防御  3:スキル】");
-
-                int select = 0;
-
-                try {
-                    select = scanner.nextInt();
-                } catch (InputMismatchException e) {
-                    System.out.println("数字を入力してください");
-                    scanner.next();
-                    continue;
-                }
-                if (select <= 0 || select >= 4) {
-                    System.out.println("1 ~ 3 で入力してください");
-                    continue;
-                }
-                int skillChoice = -1;
-
-                if (select == 1) {
-
-                    System.out.println("攻撃する敵を選んでください");
-
-                    if (!bossAppeared) {// まだボスがいないなら
-
-                        for (int i = 0; i < enemies.length; i++) {
-                            if (enemies[i].isAlive()) {
-                                System.out.println((i + 1) + ":" + enemies[i].name);
-                            }
-                        }
-
-                        int target = scanner.nextInt() - 1;
-
-                        // 敵が生きているかどうか
-                        if (target < 0 || target >= enemies.length || !enemies[target].isAlive()) {
-                            System.out.println("その敵は選べない！");
-                            continue;
-                        }
-                        actions.add(new Action(player, "攻撃", enemies[target], null));
-                        // 「行動しない」で保存だけする
-                    } else {
-                        // ボスだけだから
-                        actions.add(new Action(player, "攻撃", boss, null));
-                    }
-
-                } else if (select == 2) {
-
-                    actions.add(new Action(player, "防御", null, null));
-
-                } else if (select == 3) {// スキル選択
-
-                    for (int i = 0; i < player.skills.size(); i++) {
-                        System.out.println((i + 1) + ":" + player.skills.get(i).name
-                                + "( MP : " + player.skills.get(i).mpCost + ")");
-                    }
-                    skillChoice = scanner.nextInt() - 1;
-
-                    if (skillChoice < 0 || skillChoice >= player.skills.size()) {
-                        System.out.println("無効な選択");
-                        continue;
-                    }
-
-                    Skill skill = player.skills.get(skillChoice);
-
-                    if (player.mp < skill.mpCost) {
-                        System.out.println("MPが足りません!");
-                        continue;
-                    }
-
-                    // 対象を選んで保存
-
-                    Character skillTarget = null;
-
-                    if (skill.targetType == TargetType.SINGLE_ENEMY) {
-                        if (!bossAppeared) {
-                            System.out.println("攻撃する相手を選んでください");
-
-                            for (int i = 0; i < enemies.length; i++) {
-                                if (enemies[i].isAlive()) {
-                                    System.out.println((i + 1) + ":" + enemies[i].name);
-                                }
-                            }
-                            int target = scanner.nextInt() - 1;
-                            if (target < 0 || target >= enemies.length || !enemies[target].isAlive()) {
-                                System.out.println("その敵は選べない！");
-                                continue;
-                            }
-                            skillTarget = enemies[target];
-                        } else {
-                            skillTarget = boss;
-                        }
-                    } else if (skill.targetType == TargetType.SINGLE_ALLY) {
-                        System.out.println("対処を選んでください");
-                        for (int i = 0; i < party.length; i++) {
-                            if (party[i].isAlive()) {
-                                System.out.println((i + 1) + ":" + party[i].name + " HP : " + party[i].hp);
-                            }
-                        }
-                        int allyTarget = scanner.nextInt() - 1;
-                        if (allyTarget < 0 || allyTarget >= party.length || !party[allyTarget].isAlive()) {
-                            System.out.println("無効な対象です");
-                            continue;
-                        }
-                        skillTarget = party[allyTarget];
-
-                    } else if (skill.targetType == TargetType.DEAD_ALLY) {
-                        System.out.println("蘇生対象を選んでください");
-                        boolean hasDeadAlly = false; // 死んでいる味方が一人でもいるかどうか
-                                                     // 最初はいない!
-                        for (int i = 0; i < party.length; i++) {
-                            if (!party[i].isAlive()) {
-                                System.out.println((i + 1) + ":" + party[i].name);
-                                hasDeadAlly = true; // 死んでいる人を見つけたら「いる」に変える
-                            }
-                        }
-                        if (!hasDeadAlly) {
-                            System.out.println("蘇生対象がいません");
-                            continue;
-                        }
-                        int deadTarget = scanner.nextInt() - 1;
-                        if (deadTarget < 0 || deadTarget >= party.length || party[deadTarget].isAlive()) {
-                            System.out.println("無効な対象です");
-                            continue;
-                        }
-                        skillTarget = party[deadTarget];
-                    }
-                    actions.add(new Action(player, "スキル", skillTarget, skill));
+                if (!player.isAlive()) { continue; }
+                
+                Action action = player.slectAction(scanner, enemies, boss, bossAppeared, party);
+                if (action != null) {
+                    actions.add(action);
                 }
             }
 
@@ -201,72 +76,14 @@ public class Main {
             actions.sort((a, b) -> b.actor.speed - a.actor.speed);
             // a b を逆にすると遅い順になる
 
+
             System.out.println("--- 行動フェーズ ---");
 
             for (Action action : actions) {
-
-                if (!action.actor.isAlive()) {
-                    continue;
-                } // 行動前に死んでいたらスキップ
-
-                if (!action.actor.canAct()) {
-                    continue;
-                } // 麻痺チェック
-
-                if (action.type.equals("攻撃")) {
-
-                    if (action.target != null && action.target.isAlive())
-                        //ターゲットが存在してて、かつ生きているなら
-                        {action.actor.attack(action.target);}
-
-                } else if (action.type.equals("防御")) {
-
-                    ((Player) action.actor).defend();
-                    //「action.actor を Player として扱って、defend() を呼ぶ」
-                    System.out.println(action.actor.name + "防御した！");
-
-                } else if (action.type.equals("スキル")) {
-                    Skill skill = action.skill;
-                    Player skillUser = (Player) action.actor;
-
-                    if (skillUser.mp < skill.mpCost) {
-                        System.out.println("MPが足りません!");
-                        continue;
-                    }
-
-                    skillUser.mp -= skill.mpCost;
-
-                    if (skill.targetType == TargetType.ALL_ENEMIES) {
-                        System.out.println(skillUser.name + "は" + skill.name + "を使った！");
-                        if (!bossAppeared) {
-                            for (Enemy enemy : enemies) {
-                                if (enemy.isAlive()) {
-                                    skill.use(skillUser, enemy);
-                                }
-                            }
-                        } else {
-                            skill.use(skillUser, boss);
-                        }
-                    } else if (skill.targetType == TargetType.ALL_ALLIES) {
-                        for (Player p : party) {
-                            if (p.isAlive()) {
-                                skill.use(skillUser, p);
-                            }
-                        }
-                    } else if (skill.targetType == TargetType.SELF) {
-
-                        skill.use(skillUser, null);
-
-                    } else {
-                        if (action.target != null) {
-                            skill.use(skillUser, action.target);
-                        }
-                    }
-                } else if (action.type.equals("ボス攻撃")) {
-                    boss.takeTurn(Arrays.asList(party));
-                }
-
+                action.execute(party, enemies, boss, bossAppeared);
             }
+
+
 
             // ターン終了時の状態異常処理
 
@@ -395,3 +212,65 @@ public class Main {
 // }else{
 // skill.use(hero, enemies[target]);//そのスキルをheroが選んだ敵に使う(単体)
 // }
+
+//行動フェーズ書き換える前
+ //if (!action.actor.isAlive()) {
+       //               continue;
+         //         } // 行動前に死んでいたらスキップ
+
+           //     if (!action.actor.canAct()) {
+             //       continue;
+               /// } // 麻痺チェック
+
+          //      if (action.type.equals("攻撃")) {
+
+           //         if (action.target != null && action.target.isAlive())
+                        //ターゲットが存在してて、かつ生きているなら
+             //           {action.actor.attack(action.target);}
+
+               // } else if (action.type.equals("防御")) {
+
+                 //   ((Player) action.actor).defend();
+                    //「action.actor を Player として扱って、defend() を呼ぶ」
+                   // System.out.println(action.actor.name + "防御した！");
+
+             //   } else if (action.type.equals("スキル")) {
+               ///     Skill skill = action.skill;
+             //       Player skillUser = (Player) action.actor;
+
+               //     if (skillUser.mp < skill.mpCost) {
+                 //       System.out.println("MPが足りません!");
+                   //     continue;
+                    //}
+
+              //      skillUser.mp -= skill.mpCost;
+
+                //    if (skill.targetType == TargetType.ALL_ENEMIES) {
+                  //      System.out.println(skillUser.name + "は" + skill.name + "を使った！");
+                    //    if (!bossAppeared) {
+                      //      for (Enemy enemy : enemies) {
+                        //        if (enemy.isAlive()) {
+                          //          skill.use(skillUser, enemy);
+                            //    }
+                            //}
+                //        } else {
+                  //          skill.use(skillUser, boss);
+                  //      }
+                 //   } else if (skill.targetType == TargetType.ALL_ALLIES) {
+                   //     for (Player p : party) {
+                     //       if (p.isAlive()) {
+                       //         skill.use(skillUser, p);
+                         //   }
+                //        }
+                 //   } else if (skill.targetType == TargetType.SELF) {
+
+                   //     skill.use(skillUser, null);
+
+                  //  } else {
+                    //    if (action.target != null) {
+                      //      skill.use(skillUser, action.target);
+                     //   }
+                 //   }
+               // } else if (action.type.equals("ボス攻撃")) {
+                 //   boss.takeTurn(Arrays.asList(party));
+                //}

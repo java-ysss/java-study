@@ -11,8 +11,6 @@ public class FireSlash extends Skill {
       
         int damage = user.attack + 10;
 
-        System.out.println(user.name + "は火炎斬りを使った！");
-
         damage = applyCritical(user,damage);
 
         target.takeDamage(damage);
