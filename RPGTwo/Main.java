@@ -2,7 +2,11 @@ package RPGTwo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -12,28 +16,41 @@ public class Main {
         boolean bossAppeared = false;// ボスはまだでていない
         boolean gameOver = false; // ゲームオーバーではない
 
+        // 出現する可能性がある敵のプール
+        List<Enemy> pool = new ArrayList<>();
+        pool.add(new Slime());
+        pool.add(new Goblin());
+
+        // ランダムで2 ~ 3 体選ぶ
+        List<Enemy> selectedEnemies = new ArrayList<>();
+        int count = 2 + new Random().nextInt(2); // //0が出たら → 2 + 0 = 2体//1が出たら → 2 + 1 = 3体
+        // nextInt(2)は0か1を返すので：
+
+        for (int i = 0; i < count; i++) {//ランダム選択
+            int index = new Random().nextInt(pool.size());
+            //pool.get(index)をそのまま追加するのではなく
+            //新しいインスタンスを作って追加する
+            Enemy selected = pool.get(index);
+            try{
+                selectedEnemies.add(selected.getClass().getDeclaredConstructor().newInstance());
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+            //selected.getClass().getDeclaredConstructor().newInstance()は「
+            // 同じクラスの新しいインスタンスを作る」という処理です。
+            // これで毎回別オブジェクトになるのでA,B,Cが正しくつきます！
+        }
+
+        fixDuplicateNames(selectedEnemies);
+        Enemy[] enemies = selectedEnemies.toArray(new Enemy[0]);
+
         Player[] party = {
-                new Player("勇者", 150, 30, 20, 0.2, 0.1, 15),
-                new Player("魔法使い", 110, 60, 10, 0.2, 0.1, 10)
+                new Hero(), // HP/MP/スキル全部セット済みの勇者が入る
+                new Mega()
         };
 
-        party[0].addSkill(new FireSlash());// スキル追加
-        party[1].addSkill(new Meteor());
-        party[1].addSkill(new Heal());
-        party[1].addSkill(new ManaHeal());
-        party[0].addSkill(new PoisonSkill());
-        party[0].addSkill(new ParalyzeSkill());
-        party[1].addSkill(new HealAll());
-        party[1].addSkill(new Revive());
-
-        Enemy[] enemies = {
-                new Enemy("スライム", 80, 9, 10, 0.1, 0.06, 9),
-                new Enemy("ゴブリン", 90, 15, 12, 0.1, 0.06, 15)
-        };
-        enemies[0].addSkill(new ParalyzeSkill());
-        enemies[1].addSkill(new PoisonSkill());
-
-        Boss boss = new Boss("ゴーレム", 250, 50, 20, 0.1, 0.1, 5);
+        Boss boss = new Golem();
 
         System.out.println("戦闘開始！");
 
@@ -48,8 +65,10 @@ public class Main {
 
             for (Player player : party) {
 
-                if (!player.isAlive()) { continue; }
-                
+                if (!player.isAlive()) {
+                    continue;
+                }
+
                 Action action = player.slectAction(scanner, enemies, boss, bossAppeared, party);
                 if (action != null) {
                     actions.add(action);
@@ -70,20 +89,15 @@ public class Main {
                 }
             }
 
-
-
             // 【行動フェーズ】 speed順に並び変えて実行
             actions.sort((a, b) -> b.actor.speed - a.actor.speed);
             // a b を逆にすると遅い順になる
-
 
             System.out.println("--- 行動フェーズ ---");
 
             for (Action action : actions) {
                 action.execute(party, enemies, boss, bossAppeared);
             }
-
-
 
             // ターン終了時の状態異常処理
 
@@ -138,7 +152,7 @@ public class Main {
     }
 
     // 状態異常判定メソッド
-    public static void applyAllStatusEffects(Player[] party, Enemy[] enemies,Boss boss, boolean bossAppeared) {
+    public static void applyAllStatusEffects(Player[] party, Enemy[] enemies, Boss boss, boolean bossAppeared) {
         for (Player p : party) {
             if (p.isAlive()) {
                 p.applyStatusEffects();// 全員分処理
@@ -151,8 +165,8 @@ public class Main {
                     enemy.applyStatusEffects();
                 }
             }
-        }else{
-            boss.applyStatusEffects(); //ボスの状態異常処理
+        } else {
+            boss.applyStatusEffects(); // ボスの状態異常処理
         }
     }
 
@@ -205,6 +219,30 @@ public class Main {
         return alive.get((int) (Math.random() * alive.size()));
     }
 
+    //「同じ名前の敵が複数いたらA,B,Cをつける」メソッド
+    public static void fixDuplicateNames(List<Enemy> enemies) {
+        Map<String, Integer> nameCount = new HashMap<>();//「名前」→「何体いるか」を記録する箱
+
+
+        for (Enemy enemy : enemies) {//全敵の名前を数える
+            nameCount.put(enemy.name, nameCount.getOrDefault(enemy.name, 0) + 1);
+        } //getOrDefault(key, 0)は「キーがあればその値、なければ0を返す」
+
+
+        Map<String, Integer> nameIndex = new HashMap<>();//連番用のMapを作る
+        //「今何番目か」を記録する箱です。
+
+        for (Enemy enemy : enemies) { //全敵をループして名前を変える
+            String originalName = enemy.name; // 変更前の名前を保存
+            if (nameCount.containsKey(originalName) && nameCount.get(originalName) > 1) { 
+                // ↑　2体以上いる名前だけ処理する
+                int idx = nameIndex.getOrDefault(originalName, 0); //
+                enemy.name = originalName + (char) ('A' + idx);
+                nameIndex.put(originalName, idx + 1);
+            }
+        }
+    }
+
 }
 
 // if (skill instanceof Meteor) {//instanceof は調べた後に処理を変える
@@ -213,64 +251,64 @@ public class Main {
 // skill.use(hero, enemies[target]);//そのスキルをheroが選んだ敵に使う(単体)
 // }
 
-//行動フェーズ書き換える前
- //if (!action.actor.isAlive()) {
-       //               continue;
-         //         } // 行動前に死んでいたらスキップ
+// 行動フェーズ書き換える前
+// if (!action.actor.isAlive()) {
+// continue;
+// } // 行動前に死んでいたらスキップ
 
-           //     if (!action.actor.canAct()) {
-             //       continue;
-               /// } // 麻痺チェック
+// if (!action.actor.canAct()) {
+// continue;
+/// } // 麻痺チェック
 
-          //      if (action.type.equals("攻撃")) {
+// if (action.type.equals("攻撃")) {
 
-           //         if (action.target != null && action.target.isAlive())
-                        //ターゲットが存在してて、かつ生きているなら
-             //           {action.actor.attack(action.target);}
+// if (action.target != null && action.target.isAlive())
+// ターゲットが存在してて、かつ生きているなら
+// {action.actor.attack(action.target);}
 
-               // } else if (action.type.equals("防御")) {
+// } else if (action.type.equals("防御")) {
 
-                 //   ((Player) action.actor).defend();
-                    //「action.actor を Player として扱って、defend() を呼ぶ」
-                   // System.out.println(action.actor.name + "防御した！");
+// ((Player) action.actor).defend();
+// 「action.actor を Player として扱って、defend() を呼ぶ」
+// System.out.println(action.actor.name + "防御した！");
 
-             //   } else if (action.type.equals("スキル")) {
-               ///     Skill skill = action.skill;
-             //       Player skillUser = (Player) action.actor;
+// } else if (action.type.equals("スキル")) {
+/// Skill skill = action.skill;
+// Player skillUser = (Player) action.actor;
 
-               //     if (skillUser.mp < skill.mpCost) {
-                 //       System.out.println("MPが足りません!");
-                   //     continue;
-                    //}
+// if (skillUser.mp < skill.mpCost) {
+// System.out.println("MPが足りません!");
+// continue;
+// }
 
-              //      skillUser.mp -= skill.mpCost;
+// skillUser.mp -= skill.mpCost;
 
-                //    if (skill.targetType == TargetType.ALL_ENEMIES) {
-                  //      System.out.println(skillUser.name + "は" + skill.name + "を使った！");
-                    //    if (!bossAppeared) {
-                      //      for (Enemy enemy : enemies) {
-                        //        if (enemy.isAlive()) {
-                          //          skill.use(skillUser, enemy);
-                            //    }
-                            //}
-                //        } else {
-                  //          skill.use(skillUser, boss);
-                  //      }
-                 //   } else if (skill.targetType == TargetType.ALL_ALLIES) {
-                   //     for (Player p : party) {
-                     //       if (p.isAlive()) {
-                       //         skill.use(skillUser, p);
-                         //   }
-                //        }
-                 //   } else if (skill.targetType == TargetType.SELF) {
+// if (skill.targetType == TargetType.ALL_ENEMIES) {
+// System.out.println(skillUser.name + "は" + skill.name + "を使った！");
+// if (!bossAppeared) {
+// for (Enemy enemy : enemies) {
+// if (enemy.isAlive()) {
+// skill.use(skillUser, enemy);
+// }
+// }
+// } else {
+// skill.use(skillUser, boss);
+// }
+// } else if (skill.targetType == TargetType.ALL_ALLIES) {
+// for (Player p : party) {
+// if (p.isAlive()) {
+// skill.use(skillUser, p);
+// }
+// }
+// } else if (skill.targetType == TargetType.SELF) {
 
-                   //     skill.use(skillUser, null);
+// skill.use(skillUser, null);
 
-                  //  } else {
-                    //    if (action.target != null) {
-                      //      skill.use(skillUser, action.target);
-                     //   }
-                 //   }
-               // } else if (action.type.equals("ボス攻撃")) {
-                 //   boss.takeTurn(Arrays.asList(party));
-                //}
+// } else {
+// if (action.target != null) {
+// skill.use(skillUser, action.target);
+// }
+// }
+// } else if (action.type.equals("ボス攻撃")) {
+// boss.takeTurn(Arrays.asList(party));
+// }

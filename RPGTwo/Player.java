@@ -101,7 +101,7 @@ public class Player extends Character {
         // スキル一覧を表示
         for (int i = 0; i < skills.size(); i++) {
             System.out.println((i + 1) + ":" + skills.get(i).name
-                    + "( MP :" + skills.get(i).mpCost + " )");
+                    + "( MP : " + skills.get(i).mpCost + " )");
         }
         int skillChoice = scanner.nextInt() - 1;
 

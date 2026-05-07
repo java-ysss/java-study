@@ -18,6 +18,7 @@ public class Action {
         this.skill = skill;
     }
 
+        //Actionを実際に動かす処理
     public void execute(Player[] party, Enemy[]  enemies,Boss boss,boolean bossAppeared){
 
         //死んでいる or 麻痺ならスキップ

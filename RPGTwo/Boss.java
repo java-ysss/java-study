@@ -20,7 +20,8 @@ public class Boss extends Enemy{
         System.out.println("【 " + name + " のターン 】");
 
         List<Player> alive = new ArrayList<>();
-        //「Player型のオブジェクトを複数入れられるListを作って、aliveという変数に入れる。中身は最初は空。」
+        //「Player型のオブジェクトを複数入れられるListを作って、
+        // aliveという変数に入れる。中身は最初は空。」
 
         for(Player player : party){
             if (player.isAlive()) {
@@ -36,14 +37,20 @@ public class Boss extends Enemy{
         //new Random().nextInt() は 0以上、size未満 の数を返す
 
         if (hp < maxHp / 2) {
-            System.out.println(name + "は怒り狂った！");
+            System.out.println(name + "は怒っている！");
             System.out.println(name + "の攻撃！");
-            target.takeDamage(this.attack);
-            target.takeDamage(this.attack / 2);
+            target.takeDamage(randomAttack(this.attack));
+            target.takeDamage(randomAttack(this.attack / 2));
         }else{
             System.out.println(name + "の攻撃！");
-            target.takeDamage(this.attack);
+            target.takeDamage(randomAttack(this.attack));
         }
+    }
+
+    private int randomAttack(int base){
+        Random rand = new Random();
+        int range = (int)(base * 0.3); //+30%のブレ
+        return base - range + rand.nextInt(range * 2 + 1);
     }
 }
 //List は「リストとして使う」という約束で、

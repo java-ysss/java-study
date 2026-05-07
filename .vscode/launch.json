@@ -8,6 +8,13 @@
             "type": "java",
             "name": "Main",
             "request": "launch",
+            "mainClass": "Ppp.Main",
+            "projectName": "java-study_2cdb1a82"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
             "mainClass": "RPGTwo.Main",
             "projectName": "java-study_2cdb1a82"
         },
